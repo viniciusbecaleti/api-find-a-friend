@@ -10,7 +10,7 @@ interface CreatePetServiceRequest {
   size: 'SMALL' | 'MEDIUM' | 'BIG'
   energyLevel: 'LOW' | 'MEDIUM' | 'HIGH'
   independenceLevel: 'LOW' | 'MEDIUM' | 'HIGH'
-  requirementsForAdoption?: string[]
+  requirementsForAdoption: string[]
 }
 
 export class CreatePetService {
@@ -27,36 +27,23 @@ export class CreatePetService {
     independenceLevel,
     requirementsForAdoption,
   }: CreatePetServiceRequest) {
-    const createdPet = await this.petsRepository.create({
-      name,
-      about,
-      species,
-      age,
-      size,
-      energy_level: energyLevel,
-      independence_level: independenceLevel,
-      organization_id: organizationId,
-    })
+    const createdPet = await this.petsRepository.create(
+      {
+        name,
+        about,
+        species,
+        age,
+        size,
+        energy_level: energyLevel,
+        independence_level: independenceLevel,
+        organization_id: organizationId,
+      },
+      requirementsForAdoption,
+    )
 
-    let createdRequerimentsForAdoption
-
-    if (requirementsForAdoption) {
-      const requirements = requirementsForAdoption.map((requirement) => {
-        return {
-          pet_id: createdPet.id,
-          description: requirement,
-        }
-      })
-
-      createdRequerimentsForAdoption =
-        await prisma.requirementsForAdoption.createMany({
-          data: requirements,
-        })
-    }
-
-    return {
-      pet: createdPet,
-      requirementsForAdoption: createdRequerimentsForAdoption,
-    }
+    // return {
+    //   pet: createdPet,
+    //   requirementsForAdoption: createdRequerimentsForAdoption,
+    // }
   }
 }
