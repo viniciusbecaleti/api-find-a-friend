@@ -5,7 +5,7 @@ import { randomUUID } from 'crypto'
 export class InMemoryOrganizationsRepository
   implements OrganizationsRepository
 {
-  private items: Organization[] = []
+  public items: Organization[] = []
 
   async create(data: Prisma.OrganizationCreateInput) {
     const organization = {
