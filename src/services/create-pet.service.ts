@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma'
 import { PetsRepository } from '@/repositories/pets.repository'
+import { RequirementsForAdoptionRepository } from '@/repositories/requirements-for-adoption.repository'
 
 interface CreatePetServiceRequest {
   organizationId: string
@@ -10,11 +10,14 @@ interface CreatePetServiceRequest {
   size: 'SMALL' | 'MEDIUM' | 'BIG'
   energyLevel: 'LOW' | 'MEDIUM' | 'HIGH'
   independenceLevel: 'LOW' | 'MEDIUM' | 'HIGH'
-  requirementsForAdoption: string[]
+  requirementsForAdoption?: string[]
 }
 
 export class CreatePetService {
-  constructor(private petsRepository: PetsRepository) {}
+  constructor(
+    private petsRepository: PetsRepository,
+    private requirementsForAdoptionRepository: RequirementsForAdoptionRepository,
+  ) {}
 
   async execute({
     organizationId,
@@ -25,25 +28,30 @@ export class CreatePetService {
     size,
     energyLevel,
     independenceLevel,
-    requirementsForAdoption,
+    requirementsForAdoption = [],
   }: CreatePetServiceRequest) {
-    const createdPet = await this.petsRepository.create(
-      {
-        name,
-        about,
-        species,
-        age,
-        size,
-        energy_level: energyLevel,
-        independence_level: independenceLevel,
-        organization_id: organizationId,
-      },
-      requirementsForAdoption,
-    )
+    const createdPet = await this.petsRepository.create({
+      name,
+      about,
+      species,
+      age,
+      size,
+      energy_level: energyLevel,
+      independence_level: independenceLevel,
+      organization_id: organizationId,
+    })
 
-    // return {
-    //   pet: createdPet,
-    //   requirementsForAdoption: createdRequerimentsForAdoption,
-    // }
+    if (requirementsForAdoption.length) {
+      requirementsForAdoption.map((requiment) =>
+        this.requirementsForAdoptionRepository.create({
+          pet_id: createdPet.id,
+          description: requiment,
+        }),
+      )
+    }
+
+    return {
+      pet: createdPet,
+    }
   }
 }
