@@ -28,6 +28,7 @@ describe('Create Pet Service', async () => {
       size: 'MEDIUM',
       energyLevel: 'HIGH',
       independenceLevel: 'HIGH',
+      adopted: false,
     })
 
     expect(pet.id).toEqual(expect.any(String))
@@ -44,6 +45,7 @@ describe('Create Pet Service', async () => {
       energyLevel: 'HIGH',
       independenceLevel: 'HIGH',
       requirementsForAdoption: ['Requirement 1', 'Requirement 2'],
+      adopted: false,
     })
 
     expect(pet.id).toEqual(expect.any(String))

@@ -11,6 +11,7 @@ interface CreatePetServiceRequest {
   energyLevel: 'LOW' | 'MEDIUM' | 'HIGH'
   independenceLevel: 'LOW' | 'MEDIUM' | 'HIGH'
   requirementsForAdoption?: string[]
+  adopted?: boolean
 }
 
 export class CreatePetService {
@@ -29,6 +30,7 @@ export class CreatePetService {
     energyLevel,
     independenceLevel,
     requirementsForAdoption = [],
+    adopted = false,
   }: CreatePetServiceRequest) {
     const createdPet = await this.petsRepository.create({
       name,
@@ -39,6 +41,7 @@ export class CreatePetService {
       energy_level: energyLevel,
       independence_level: independenceLevel,
       organization_id: organizationId,
+      adopted,
     })
 
     if (requirementsForAdoption.length) {
