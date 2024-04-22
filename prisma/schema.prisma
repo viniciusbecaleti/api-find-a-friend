@@ -19,6 +19,9 @@ model Organization {
   email            String @unique
   cep              String
   address          String
+  neighborhood     String
+  city             String
+  state            String
   whatsapp         String @unique
   password         String
 
