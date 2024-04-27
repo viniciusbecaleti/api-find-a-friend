@@ -24,6 +24,9 @@ describe('Authenticate Organization Service', async () => {
       cep: 'any_cep',
       responsible_name: 'any_responsible_name',
       whatsapp: 'any_whatsapp',
+      city: 'any_city',
+      neighborhood: 'any_neighborhood',
+      state: 'any_state',
     })
 
     const { organization } = await sut.execute({
@@ -44,6 +47,9 @@ describe('Authenticate Organization Service', async () => {
       cep: 'any_cep',
       responsible_name: 'any_responsible_name',
       whatsapp: 'any_whatsapp',
+      city: 'any_city',
+      neighborhood: 'any_neighborhood',
+      state: 'any_state',
     })
 
     await expect(() =>
@@ -64,6 +70,9 @@ describe('Authenticate Organization Service', async () => {
       cep: 'any_cep',
       responsible_name: 'any_responsible_name',
       whatsapp: 'any_whatsapp',
+      city: 'any_city',
+      neighborhood: 'any_neighborhood',
+      state: 'any_state',
     })
 
     await expect(() =>
