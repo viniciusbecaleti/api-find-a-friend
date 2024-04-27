@@ -4,10 +4,15 @@ import { Organization, Pet } from '@prisma/client'
 
 interface FetchPetsForAdoptionServiceRequest {
   city: string
+  age?: 'BABY' | 'YOUNG' | 'ADULT' | 'SENIOR'
+  size?: 'SMALL' | 'MEDIUM' | 'BIG'
+  energyLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
+  independenceLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
+  species?: 'DOG' | 'CAT'
 }
 
 interface FetchPetsForAdoptionServiceResponse {
-  petsForAdoption: Pet[]
+  pets: Pet[]
 }
 
 export class FetchPetsForAdoptionService {
@@ -18,13 +23,18 @@ export class FetchPetsForAdoptionService {
 
   async execute({
     city,
+    age,
+    size,
+    energyLevel,
+    independenceLevel,
+    species,
   }: FetchPetsForAdoptionServiceRequest): Promise<FetchPetsForAdoptionServiceResponse> {
     const organizationsFromCity: Organization[] =
       await this.organizationsRepository.findManyByCity(city)
 
-    const petsForAdoption: Pet[] = []
+    const allPetsForAdoption: Pet[] = []
 
-    organizationsFromCity.forEach(async (organization) => {
+    for await (const organization of organizationsFromCity) {
       const petsFromOrganization =
         await this.petsRepository.findManyByOrganizationId(organization.id)
 
@@ -32,11 +42,37 @@ export class FetchPetsForAdoptionService {
         (pet) => pet.adopted === false,
       )
 
-      petsForAdoption.push(...petsFilteredByAdoptionStatus)
-    })
+      allPetsForAdoption.push(...petsFilteredByAdoptionStatus)
+    }
+
+    let filteredPets = allPetsForAdoption
+
+    if (age) {
+      filteredPets = filteredPets.filter((pet) => pet.age === age)
+    }
+
+    if (size) {
+      filteredPets = filteredPets.filter((pet) => pet.size === size)
+    }
+
+    if (energyLevel) {
+      filteredPets = filteredPets.filter(
+        (pet) => pet.energy_level === energyLevel,
+      )
+    }
+
+    if (independenceLevel) {
+      filteredPets = filteredPets.filter(
+        (pet) => pet.independence_level === independenceLevel,
+      )
+    }
+
+    if (species) {
+      filteredPets = filteredPets.filter((pet) => pet.species === species)
+    }
 
     return {
-      petsForAdoption,
+      pets: filteredPets,
     }
   }
 }
