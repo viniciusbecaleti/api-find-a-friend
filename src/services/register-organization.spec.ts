@@ -17,12 +17,15 @@ describe('Register Organization Service', async () => {
 
   it('should be able to register a new organization', async () => {
     const { organization } = await registerOrganizationService.execute({
-      address: 'any_address',
-      cep: 'any_cep',
-      email: 'any_email',
-      password: 'any_password',
       responsibleName: 'any_responsible_name',
+      email: 'any_email',
+      cep: 'any_cep',
+      address: 'any_address',
+      neighborhood: 'any_neighborhood',
+      city: 'any_city',
+      state: 'any_state',
       whatsapp: 'any_whatsapp',
+      password: 'any_password',
     })
 
     expect(organization.id).toEqual(expect.any(String))
@@ -32,34 +35,43 @@ describe('Register Organization Service', async () => {
 
   it('should not be able to register a new organization with an email that is already in use', async () => {
     await registerOrganizationService.execute({
-      address: 'any_address',
-      cep: 'any_cep',
-      email: 'any_email',
-      password: 'any_password',
       responsibleName: 'any_responsible_name',
+      email: 'any_email',
+      cep: 'any_cep',
+      address: 'any_address',
+      neighborhood: 'any_neighborhood',
+      city: 'any_city',
+      state: 'any_state',
       whatsapp: 'any_whatsapp',
+      password: 'any_password',
     })
 
     await expect(() =>
       registerOrganizationService.execute({
-        address: 'any_address',
-        cep: 'any_cep',
-        email: 'any_email',
-        password: 'any_password',
         responsibleName: 'any_responsible_name',
+        email: 'any_email',
+        cep: 'any_cep',
+        address: 'any_address',
+        neighborhood: 'any_neighborhood',
+        city: 'any_city',
+        state: 'any_state',
         whatsapp: 'any_whatsapp',
+        password: 'any_password',
       }),
     ).rejects.toBeInstanceOf(OrganizationAlredyExistsError)
   })
 
   it('should be able to hashed the password before saving it', async () => {
     const { organization } = await registerOrganizationService.execute({
-      address: 'any_address',
-      cep: 'any_cep',
-      email: 'any_email',
-      password: 'any_password',
       responsibleName: 'any_responsible_name',
+      email: 'any_email',
+      cep: 'any_cep',
+      address: 'any_address',
+      neighborhood: 'any_neighborhood',
+      city: 'any_city',
+      state: 'any_state',
       whatsapp: 'any_whatsapp',
+      password: 'any_password',
     })
 
     const isPasswordHashed = await compare(
