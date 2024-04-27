@@ -2,8 +2,8 @@ import { RegisterOrganizationService } from '@/services/register-organization.se
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
-import { PrismaOrganizationsRepository } from '../../repositories/prisma/prisma-organizations.repository'
 import { OrganizationAlredyExistsError } from '@/services/errors/organization-alredy-exists-error'
+import { PrismaOrganizationsRepository } from '@/repositories/prisma/prisma-organizations.repository'
 
 export async function registerOrganizationController(
   request: FastifyRequest,
@@ -14,12 +14,24 @@ export async function registerOrganizationController(
     email: z.string().email(),
     cep: z.string().length(8),
     address: z.string(),
+    neighborhood: z.string(),
+    city: z.string(),
+    state: z.string(),
     whatsapp: z.string().length(11),
     password: z.string().min(6),
   })
 
-  const { responsibleName, email, address, cep, password, whatsapp } =
-    registerBodySchema.parse(request.body)
+  const {
+    responsibleName,
+    email,
+    cep,
+    address,
+    neighborhood,
+    city,
+    state,
+    whatsapp,
+    password,
+  } = registerBodySchema.parse(request.body)
 
   try {
     const prismaOrganizationsRepository = new PrismaOrganizationsRepository()
@@ -30,10 +42,13 @@ export async function registerOrganizationController(
     await registerOrganizationService.execute({
       responsibleName,
       email,
-      address,
       cep,
-      password,
+      address,
+      neighborhood,
+      city,
+      state,
       whatsapp,
+      password,
     })
 
     return reply.status(201).send()
