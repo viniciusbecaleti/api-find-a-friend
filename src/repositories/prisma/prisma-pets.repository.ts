@@ -1,30 +1,33 @@
-import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { PetsRepository } from '../pets.repository'
+import { prisma } from '@/lib/prisma'
 
-export class PrismaPetsRepository {
-  async create(
-    data: Prisma.PetUncheckedCreateInput,
-    requirementsForAdoption: string[],
-  ) {
-    await prisma.$transaction(async (tcx) => {
-      const createdPet = await tcx.pet.create({
-        data,
-      })
-
-      if (requirementsForAdoption.length) {
-        const requirements = requirementsForAdoption.map((requirement) => {
-          return {
-            pet_id: createdPet.id,
-            description: requirement,
-          }
-        })
-
-        await tcx.requirementsForAdoption.createMany({
-          data: requirements,
-        })
-      }
-
-      return createdPet
+export class PrismaPetsRepository implements PetsRepository {
+  async create(data: Prisma.PetUncheckedCreateInput) {
+    const createdPet = await prisma.pet.create({
+      data,
     })
+
+    return createdPet
+  }
+
+  async findById(id: string) {
+    const pet = await prisma.pet.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return pet
+  }
+
+  async findManyByOrganizationId(organizationId: string) {
+    const pets = await prisma.pet.findMany({
+      where: {
+        organization_id: organizationId,
+      },
+    })
+
+    return pets
   }
 }
