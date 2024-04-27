@@ -1,27 +1,38 @@
 import { OrganizationsRepository } from '@/repositories/organizations.repository'
 import { hash } from 'bcryptjs'
 import { OrganizationAlredyExistsError } from './errors/organization-alredy-exists-error'
+import { Organization } from '@prisma/client'
 
 interface RegisterOrganizationServiceRequest {
   responsibleName: string
   email: string
-  address: string
   cep: string
-  password: string
+  address: string
+  neighborhood: string
+  city: string
+  state: string
   whatsapp: string
+  password: string
+}
+
+interface RegisterOrganizationServiceResponse {
+  organization: Organization
 }
 
 export class RegisterOrganizationService {
   constructor(private organizationsRepository: OrganizationsRepository) {}
 
   async execute({
-    address,
-    cep,
-    email,
-    password,
     responsibleName,
+    email,
+    cep,
+    address,
+    neighborhood,
+    city,
+    state,
     whatsapp,
-  }: RegisterOrganizationServiceRequest) {
+    password,
+  }: RegisterOrganizationServiceRequest): Promise<RegisterOrganizationServiceResponse> {
     const organizationAlreadyExists =
       await this.organizationsRepository.findOrganizationByEmail(email)
 
@@ -34,10 +45,13 @@ export class RegisterOrganizationService {
     const createdOrganization = await this.organizationsRepository.create({
       responsible_name: responsibleName,
       email,
-      address,
       cep,
-      password: hashedPassword,
+      address,
+      neighborhood,
+      city,
+      state,
       whatsapp,
+      password: hashedPassword,
     })
 
     return {
