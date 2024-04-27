@@ -3,12 +3,15 @@ import { OrganizationsRepository } from '@/repositories/organizations.repository
 import { Organization, Pet } from '@prisma/client'
 
 interface FetchPetsForAdoptionServiceRequest {
-  city: string
-  age?: 'BABY' | 'YOUNG' | 'ADULT' | 'SENIOR'
-  size?: 'SMALL' | 'MEDIUM' | 'BIG'
-  energyLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
-  independenceLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
-  species?: 'DOG' | 'CAT'
+  filters: {
+    city: string
+    age?: 'BABY' | 'YOUNG' | 'ADULT' | 'SENIOR'
+    size?: 'SMALL' | 'MEDIUM' | 'BIG'
+    energyLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
+    independenceLevel?: 'LOW' | 'MEDIUM' | 'HIGH'
+    species?: 'DOG' | 'CAT'
+  }
+  page: number
 }
 
 interface FetchPetsForAdoptionServiceResponse {
@@ -22,12 +25,8 @@ export class FetchPetsForAdoptionService {
   ) {}
 
   async execute({
-    city,
-    age,
-    size,
-    energyLevel,
-    independenceLevel,
-    species,
+    filters: { city, age, size, energyLevel, independenceLevel, species },
+    page,
   }: FetchPetsForAdoptionServiceRequest): Promise<FetchPetsForAdoptionServiceResponse> {
     const organizationsFromCity: Organization[] =
       await this.organizationsRepository.findManyByCity(city)
@@ -45,6 +44,7 @@ export class FetchPetsForAdoptionService {
       allPetsForAdoption.push(...petsFilteredByAdoptionStatus)
     }
 
+    // Filtering
     let filteredPets = allPetsForAdoption
 
     if (age) {
@@ -71,8 +71,19 @@ export class FetchPetsForAdoptionService {
       filteredPets = filteredPets.filter((pet) => pet.species === species)
     }
 
+    // Order the pets by created_at
+    const orderedPets = filteredPets.sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    )
+
+    // Pagination
+    const startIndex = (page - 1) * 20
+    const endIndex = startIndex + 20
+    const paginatedPets = orderedPets.slice(startIndex, endIndex)
+
     return {
-      pets: filteredPets,
+      pets: paginatedPets,
     }
   }
 }

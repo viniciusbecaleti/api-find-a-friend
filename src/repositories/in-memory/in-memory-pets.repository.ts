@@ -17,6 +17,7 @@ export class InMemoryPetsRepository implements PetsRepository {
       energy_level: data.energy_level,
       independence_level: data.independence_level,
       adopted: data.adopted ?? false,
+      created_at: new Date(),
     }
 
     this.items.push(pet)
