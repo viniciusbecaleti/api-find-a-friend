@@ -14,6 +14,9 @@ export class InMemoryOrganizationsRepository
       email: data.email,
       cep: data.cep,
       address: data.address,
+      neighborhood: data.neighborhood,
+      city: data.city,
+      state: data.state,
       whatsapp: data.whatsapp,
       password: data.password,
     }
@@ -34,9 +37,7 @@ export class InMemoryOrganizationsRepository
   }
 
   async findManyByCity(city: string) {
-    const organizations = this.items.filter(
-      (item) => item. === city,
-    )
+    const organizations = this.items.filter((item) => item.city === city)
 
     return organizations
   }
