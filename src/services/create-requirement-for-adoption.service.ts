@@ -1,8 +1,13 @@
 import { RequirementsForAdoptionRepository } from '@/repositories/requirements-for-adoption.repository'
+import { RequirementsForAdoption } from '@prisma/client'
 
 interface CreateRequimentForAdoptionServiceRequest {
   petId: string
   description: string
+}
+
+interface CreateRequimentForAdoptionServiceResponse {
+  requirementForAdoption: RequirementsForAdoption
 }
 
 export class CreateRequimentForAdoptionService {
@@ -13,7 +18,7 @@ export class CreateRequimentForAdoptionService {
   async execute({
     petId,
     description,
-  }: CreateRequimentForAdoptionServiceRequest) {
+  }: CreateRequimentForAdoptionServiceRequest): Promise<CreateRequimentForAdoptionServiceResponse> {
     const createdRequirementForAdoption =
       await this.requirementsForAdoptionRepository.create({
         pet_id: petId,
