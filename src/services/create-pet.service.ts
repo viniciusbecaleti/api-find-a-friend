@@ -1,5 +1,6 @@
 import { PetsRepository } from '@/repositories/pets.repository'
 import { RequirementsForAdoptionRepository } from '@/repositories/requirements-for-adoption.repository'
+import { Pet } from '@prisma/client'
 
 interface CreatePetServiceRequest {
   organizationId: string
@@ -12,6 +13,10 @@ interface CreatePetServiceRequest {
   independenceLevel: 'LOW' | 'MEDIUM' | 'HIGH'
   requirementsForAdoption?: string[]
   adopted?: boolean
+}
+
+interface CreatePetServiceResponse {
+  pet: Pet
 }
 
 export class CreatePetService {
@@ -31,7 +36,7 @@ export class CreatePetService {
     independenceLevel,
     requirementsForAdoption = [],
     adopted = false,
-  }: CreatePetServiceRequest) {
+  }: CreatePetServiceRequest): Promise<CreatePetServiceResponse> {
     const createdPet = await this.petsRepository.create({
       name,
       about,
