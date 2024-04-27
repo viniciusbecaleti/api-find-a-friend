@@ -1,6 +1,5 @@
-import { PrismaOrganizationsRepository } from '@/repositories/prisma/prisma-organizations.repository'
-import { AuthenticateOrganizationService } from '@/services/authenticate-organization.service'
 import { InvalidCredentialsError } from '@/services/errors/invalid-credentials-error'
+import { makeAuthenticateOrganizationService } from '@/services/factories/make-authenticate-organization-service'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 
@@ -16,12 +15,9 @@ export async function authenticateOrganizationController(
   const { email, password } = authenticateBodySchema.parse(request.body)
 
   try {
-    const prismaOrganizationsRepository = new PrismaOrganizationsRepository()
-    const authenticateOrganizationService = new AuthenticateOrganizationService(
-      prismaOrganizationsRepository,
-    )
+    const authenticateService = makeAuthenticateOrganizationService()
 
-    const { organization } = await authenticateOrganizationService.execute({
+    const { organization } = await authenticateService.execute({
       email,
       password,
     })
