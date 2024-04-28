@@ -5,7 +5,7 @@ import { Pet } from '@prisma/client'
 interface CreatePetServiceRequest {
   organizationId: string
   name: string
-  about: string
+  about: string | null
   species: 'DOG' | 'CAT'
   age: 'BABY' | 'YOUNG' | 'ADULT' | 'SENIOR'
   size: 'SMALL' | 'MEDIUM' | 'BIG'

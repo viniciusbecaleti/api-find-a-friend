@@ -33,7 +33,7 @@ model Organization {
 model Pet {
   id                 String               @id @default(uuid())
   name               String
-  about              String
+  about              String?
   species            PetSpecies
   age                PetAge
   size               PetSize
